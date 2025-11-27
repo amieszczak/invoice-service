@@ -8,12 +8,23 @@ export const invoiceService = {
       return [];
     }
     
+    console.log('🔍 Fetching invoices from Supabase...');
     const { data, error } = await supabase
       .from('invoices')
       .select('*')
       .order('created_at', { ascending: false });
     
-    if (error) throw error;
+    if (error) {
+      console.error('❌ Supabase error:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
+      throw error;
+    }
+    
+    console.log(`✅ Successfully fetched ${data?.length || 0} invoices`);
     return data || [];
   },
 
@@ -22,6 +33,7 @@ export const invoiceService = {
       throw new Error('Supabase client not configured. Please set SUPABASE_URL and SUPABASE_SERVICE_KEY in .env file');
     }
     
+    console.log('📝 Creating invoice:', dto);
     const { data, error } = await supabase
       .from('invoices')
       .insert({
@@ -31,7 +43,17 @@ export const invoiceService = {
       .select()
       .single();
     
-    if (error) throw error;
+    if (error) {
+      console.error('❌ Supabase error:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
+      throw error;
+    }
+    
+    console.log('✅ Invoice created successfully:', data);
     return data;
   }
 };

@@ -7,10 +7,15 @@ router.get('/', async (req, res) => {
   try {
     const invoices = await invoiceService.getAll();
     res.json(invoices);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching invoices:', error);
     const errorMessage = error instanceof Error ? error.message : 'Failed to fetch invoices';
-    res.status(500).json({ error: errorMessage });
+    const errorDetails = error?.details || error?.hint || error?.code || '';
+    console.error('Full error details:', { message: errorMessage, details: errorDetails });
+    res.status(500).json({ 
+      error: errorMessage,
+      details: errorDetails || undefined
+    });
   }
 });
 
