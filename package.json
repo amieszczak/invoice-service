@@ -1,27 +1,14 @@
 {
   "name": "invoice-service",
-  "version": "1.0.0",
-  "description": "Fullstack invoice service application with Next.js frontend and Express backend",
   "private": true,
-  "workspaces": [
-    "frontend",
-    "backend"
-  ],
+  "workspaces": ["backend", "frontend"],
   "scripts": {
-    "dev:frontend": "npm run dev --workspace=frontend",
-    "dev:backend": "npm run dev --workspace=backend",
-    "dev": "npm run dev:backend & npm run dev:frontend",
-    "build:frontend": "npm run build --workspace=frontend",
-    "build:backend": "npm run build --workspace=backend",
-    "build": "npm run build:backend && npm run build:frontend"
+    "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "build": "npm run build -w backend && npm run build -w frontend",
+    "start": "npm run start -w backend"
   },
-  "keywords": [
-    "invoice",
-    "service",
-    "nextjs",
-    "express"
-  ],
-  "author": "",
-  "license": "ISC"
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
 }
 

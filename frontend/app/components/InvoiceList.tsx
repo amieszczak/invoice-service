@@ -10,7 +10,7 @@ interface Invoice {
   due_date: string;
 }
 
-export default function Home() {
+export default function InvoiceList() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -56,4 +56,3 @@ export default function Home() {
     </div>
   );
 }
-

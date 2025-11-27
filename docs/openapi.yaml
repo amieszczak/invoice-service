@@ -1,0 +1,35 @@
+openapi: 3.0.0
+info:
+  title: Invoice API
+  version: 1.0.0
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+  /invoices:
+    get:
+      summary: List all invoices
+      responses:
+        '200':
+          description: Array of invoices
+    post:
+      summary: Create invoice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client_name:
+                  type: string
+                amount:
+                  type: number
+                due_date:
+                  type: string
+      responses:
+        '201':
+          description: Created
