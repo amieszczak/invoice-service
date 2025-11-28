@@ -8,7 +8,7 @@ export const invoiceService = {
       return [];
     }
     
-    console.log('🔍 Fetching invoices from Supabase...');
+    console.log('Fetching invoices from Supabase...');
     const { data, error } = await supabase
       .from('invoices')
       .select('*')
