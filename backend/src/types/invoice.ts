@@ -13,3 +13,10 @@ export interface CreateInvoiceDTO {
   status?: Invoice['status'];
   due_date: string;
 }
+
+export interface UpdateInvoiceDTO {
+  client_name?: string;
+  amount?: number;
+  status?: Invoice['status'];
+  due_date?: string;
+}
