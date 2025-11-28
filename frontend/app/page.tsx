@@ -1,5 +1,6 @@
 import { getInvoices } from '@/integrations/supabase/getInvoices';
 import InvoiceList from './components/InvoiceList';
+import InvoiceHeader from './components/InvoiceHeader';
 import { Invoice } from '@/types/invoice';
 
 export default async function Home() {
@@ -15,7 +16,7 @@ export default async function Home() {
 
   return (
     <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>Invoices</h1>
+      <InvoiceHeader />
       {error ? (
         <p style={{ color: 'red' }}>Error: {error}</p>
       ) : (
