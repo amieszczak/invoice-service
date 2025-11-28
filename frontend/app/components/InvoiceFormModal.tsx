@@ -3,21 +3,24 @@
 import React, { useState, useEffect } from 'react';
 import { Invoice } from '@/types/invoice';
 
-interface AddInvoiceModalProps {
+interface InvoiceFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (invoice: Omit<Invoice, 'id' | 'created_at'>) => void;
   isSubmitting?: boolean;
   error?: string | null;
+  invoice?: Invoice | null;
 }
 
-export default function AddInvoiceModal({ 
+export default function InvoiceFormModal({ 
   isOpen, 
   onClose, 
   onSubmit,
   isSubmitting = false,
-  error: externalError = null
-}: AddInvoiceModalProps) {
+  error: externalError = null,
+  invoice = null
+}: InvoiceFormModalProps) {
+  const isEditMode = !!invoice;
 
   const getTodayDate = (): string => {
     const today = new Date();
@@ -38,16 +41,25 @@ export default function AddInvoiceModal({
 
   useEffect(() => {
     if (isOpen) {
-
-      setFormData({
-        client_name: '',
-        amount: '',
-        status: 'draft',
-        due_date: getTodayDate(),
-      });
+      if (invoice) {
+        setFormData({
+          client_name: invoice.client_name,
+          amount: String(invoice.amount),
+          status: invoice.status as 'draft' | 'sent' | 'paid' | 'overdue',
+          due_date: invoice.due_date,
+        });
+      } else {
+        
+        setFormData({
+          client_name: '',
+          amount: '',
+          status: 'draft',
+          due_date: getTodayDate(),
+        });
+      }
       setErrors({});
     }
-  }, [isOpen]);
+  }, [isOpen, invoice]);
 
   if (!isOpen) return null;
 
@@ -132,7 +144,9 @@ export default function AddInvoiceModal({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 style={{ marginTop: 0, marginBottom: '1.5rem' }}>Add New Invoice</h2>
+        <h2 style={{ marginTop: 0, marginBottom: '1.5rem' }}>
+          {isEditMode ? 'Edit Invoice' : 'Add New Invoice'}
+        </h2>
 
         {externalError && (
           <div
@@ -315,7 +329,10 @@ export default function AddInvoiceModal({
                 opacity: isSubmitting ? 0.6 : 1,
               }}
             >
-              {isSubmitting ? 'Adding...' : 'Add Invoice'}
+              {isSubmitting 
+                ? (isEditMode ? 'Updating...' : 'Adding...') 
+                : (isEditMode ? 'Update Invoice' : 'Add Invoice')
+              }
             </button>
           </div>
         </form>

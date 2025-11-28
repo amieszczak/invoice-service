@@ -1,34 +1,112 @@
-import { Invoice } from '@/types/invoice';
+'use client';
+
+import { Invoice as InvoiceType } from '@/types/invoice';
+import Invoice from './Invoice';
+import { deleteInvoice } from '@/integrations/supabase/deleteInvoice';
+import { editInvoice } from '@/integrations/supabase/editInvoice';
+import InvoiceFormModal from './InvoiceFormModal';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 interface InvoiceListProps {
-  invoices: Invoice[];
+  invoices: InvoiceType[];
 }
 
 export default function InvoiceList({ invoices }: InvoiceListProps) {
+  const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [editingInvoice, setEditingInvoice] = useState<InvoiceType | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleDelete = async (invoiceId: string) => {
+    if (!confirm('Are you sure you want to delete this invoice?')) {
+      return;
+    }
+
+    setIsDeleting(invoiceId);
+    try {
+      await deleteInvoice(invoiceId);
+      router.refresh();
+    } catch (error) {
+      alert('Failed to delete invoice. Please try again.');
+      console.error('Delete error:', error);
+    } finally {
+      setIsDeleting(null);
+    }
+  };
+
+  const handleEdit = (invoiceId: string) => {
+    const invoice = invoices.find(inv => inv.id === invoiceId);
+    if (invoice) {
+      setEditingInvoice(invoice);
+      setIsEditModalOpen(true);
+      setError(null);
+    }
+  };
+
+  const handleEditSubmit = async (invoiceData: Omit<InvoiceType, 'id' | 'created_at'>) => {
+    if (!editingInvoice) return;
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      await editInvoice(editingInvoice.id, invoiceData);
+      router.refresh();
+      setIsEditModalOpen(false);
+      setEditingInvoice(null);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update invoice';
+      setError(errorMessage);
+      console.error('Error updating invoice:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   if (invoices.length === 0) {
     return <p>No invoices found</p>;
   }
 
   return (
-    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-      <thead>
-        <tr>
-          <th>Client</th>
-          <th>Amount</th>
-          <th>Status</th>
-          <th>Due Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        {invoices.map(inv => (
-          <tr key={inv.id}>
-            <td>{inv.client_name}</td>
-            <td>${inv.amount}</td>
-            <td>{inv.status}</td>
-            <td>{inv.due_date}</td>
+    <>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr>
+            <th>Client</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Due Date</th>
+            <th style={{ textAlign: 'right' }}>Actions</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {invoices.map(inv => (
+            <Invoice 
+              key={inv.id} 
+              invoice={inv}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              isDeleting={isDeleting === inv.id}
+            />
+          ))}
+        </tbody>
+      </table>
+      
+      <InvoiceFormModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setEditingInvoice(null);
+          setError(null);
+        }}
+        onSubmit={handleEditSubmit}
+        isSubmitting={isSubmitting}
+        error={error}
+        invoice={editingInvoice}
+      />
+    </>
   );
 }

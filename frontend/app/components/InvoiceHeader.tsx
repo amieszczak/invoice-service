@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import IconButton from './IconButton';
-import AddInvoiceModal from './AddInvoiceModal';
+import InvoiceFormModal from './InvoiceFormModal';
 import { Invoice } from '@/types/invoice';
 import { createInvoice } from '@/integrations/supabase/createInvoice';
 
@@ -55,7 +55,7 @@ export default function InvoiceHeader() {
           ariaLabel="Add new invoice"
         />
       </div>
-      <AddInvoiceModal
+      <InvoiceFormModal
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);
