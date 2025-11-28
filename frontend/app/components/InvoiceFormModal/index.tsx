@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Invoice } from '@/types/invoice';
+import styles from './InvoiceFormModal.module.css';
 
 interface InvoiceFormModalProps {
   isOpen: boolean;
@@ -118,62 +119,30 @@ export default function InvoiceFormModal({
 
   return (
     <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000,
-      }}
+      className={styles.overlay}
       onClick={onClose}
     >
       <div
-        style={{
-          backgroundColor: 'white',
-          padding: '2rem',
-          borderRadius: '8px',
-          maxWidth: '500px',
-          width: '90%',
-          maxHeight: '90vh',
-          overflow: 'auto',
-        }}
+        className={styles.modal}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 style={{ marginTop: 0, marginBottom: '1.5rem' }}>
+        <h2 className={styles.title}>
           {isEditMode ? 'Edit Invoice' : 'Add New Invoice'}
         </h2>
 
         {externalError && (
-          <div
-            style={{
-              padding: '0.75rem',
-              marginBottom: '1rem',
-              backgroundColor: '#fee',
-              border: '1px solid #fcc',
-              borderRadius: '4px',
-              color: '#c33',
-            }}
-          >
+          <div className={styles.errorMessage}>
             {externalError}
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '1rem' }}>
+          <div className={styles.formGroup}>
             <label 
               htmlFor="client_name" 
-              style={{ 
-                display: 'block', 
-                marginBottom: '0.5rem',
-                fontWeight: '500'
-              }}
+              className={styles.label}
             >
-              Client <span style={{ color: 'red' }}>*</span>
+              Client <span className={styles.required}>*</span>
             </label>
             <input
               type="text"
@@ -182,32 +151,21 @@ export default function InvoiceFormModal({
               value={formData.client_name}
               onChange={handleChange}
               required
-              style={{
-                width: '100%',
-                padding: '0.5rem',
-                border: `1px solid ${errors.client_name ? 'red' : '#ccc'}`,
-                borderRadius: '4px',
-                fontSize: '1rem',
-                boxSizing: 'border-box',
-              }}
+              className={`${styles.input} ${errors.client_name ? styles.inputError : ''}`}
             />
             {errors.client_name && (
-              <span style={{ color: 'red', fontSize: '0.875rem' }}>
+              <span className={styles.errorText}>
                 {errors.client_name}
               </span>
             )}
           </div>
 
-          <div style={{ marginBottom: '1rem' }}>
+          <div className={styles.formGroup}>
             <label 
               htmlFor="amount" 
-              style={{ 
-                display: 'block', 
-                marginBottom: '0.5rem',
-                fontWeight: '500'
-              }}
+              className={styles.label}
             >
-              Amount <span style={{ color: 'red' }}>*</span>
+              Amount <span className={styles.required}>*</span>
             </label>
             <input
               type="number"
@@ -218,30 +176,19 @@ export default function InvoiceFormModal({
               required
               min="0"
               step="0.01"
-              style={{
-                width: '100%',
-                padding: '0.5rem',
-                border: `1px solid ${errors.amount ? 'red' : '#ccc'}`,
-                borderRadius: '4px',
-                fontSize: '1rem',
-                boxSizing: 'border-box',
-              }}
+              className={`${styles.input} ${errors.amount ? styles.inputError : ''}`}
             />
             {errors.amount && (
-              <span style={{ color: 'red', fontSize: '0.875rem' }}>
+              <span className={styles.errorText}>
                 {errors.amount}
               </span>
             )}
           </div>
 
-          <div style={{ marginBottom: '1rem' }}>
+          <div className={styles.formGroup}>
             <label 
               htmlFor="status" 
-              style={{ 
-                display: 'block', 
-                marginBottom: '0.5rem',
-                fontWeight: '500'
-              }}
+              className={styles.label}
             >
               Status
             </label>
@@ -250,14 +197,7 @@ export default function InvoiceFormModal({
               name="status"
               value={formData.status}
               onChange={handleChange}
-              style={{
-                width: '100%',
-                padding: '0.5rem',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '1rem',
-                boxSizing: 'border-box',
-              }}
+              className={styles.select}
             >
               <option value="draft">Draft</option>
               <option value="sent">Sent</option>
@@ -266,16 +206,12 @@ export default function InvoiceFormModal({
             </select>
           </div>
 
-          <div style={{ marginBottom: '1.5rem' }}>
+          <div className={styles.formGroupLast}>
             <label 
               htmlFor="due_date" 
-              style={{ 
-                display: 'block', 
-                marginBottom: '0.5rem',
-                fontWeight: '500'
-              }}
+              className={styles.label}
             >
-              Due Date <span style={{ color: 'red' }}>*</span>
+              Due Date <span className={styles.required}>*</span>
             </label>
             <input
               type="date"
@@ -284,50 +220,27 @@ export default function InvoiceFormModal({
               value={formData.due_date}
               onChange={handleChange}
               required
-              style={{
-                width: '100%',
-                padding: '0.5rem',
-                border: `1px solid ${errors.due_date ? 'red' : '#ccc'}`,
-                borderRadius: '4px',
-                fontSize: '1rem',
-                boxSizing: 'border-box',
-              }}
+              className={`${styles.input} ${errors.due_date ? styles.inputError : ''}`}
             />
             {errors.due_date && (
-              <span style={{ color: 'red', fontSize: '0.875rem' }}>
+              <span className={styles.errorText}>
                 {errors.due_date}
               </span>
             )}
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+          <div className={styles.buttonGroup}>
             <button
               type="button"
               onClick={onClose}
-              style={{
-                padding: '0.5rem 1rem',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                backgroundColor: 'white',
-                cursor: 'pointer',
-                fontSize: '1rem',
-              }}
+              className={styles.cancelButton}
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              style={{
-                padding: '0.5rem 1rem',
-                border: 'none',
-                borderRadius: '4px',
-                backgroundColor: isSubmitting ? '#ccc' : '#0070f3',
-                color: 'white',
-                cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                fontSize: '1rem',
-                opacity: isSubmitting ? 0.6 : 1,
-              }}
+              className={`${styles.submitButton} ${isSubmitting ? styles.submitButtonDisabled : ''}`}
             >
               {isSubmitting 
                 ? (isEditMode ? 'Updating...' : 'Adding...') 

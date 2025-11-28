@@ -1,12 +1,13 @@
 'use client';
 
 import { Invoice as InvoiceType } from '@/types/invoice';
-import Invoice from './Invoice';
+import Invoice from '../Invoice';
 import { deleteInvoice } from '@/integrations/supabase/deleteInvoice';
 import { editInvoice } from '@/integrations/supabase/editInvoice';
-import InvoiceFormModal from './InvoiceFormModal';
+import InvoiceFormModal from '../InvoiceFormModal';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import styles from './InvoiceList.module.css';
 
 interface InvoiceListProps {
   invoices: InvoiceType[];
@@ -19,6 +20,14 @@ export default function InvoiceList({ invoices }: InvoiceListProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const tableHeaders = [
+    { key: 'client', label: 'Client', className: '' },
+    { key: 'amount', label: 'Amount', className: '' },
+    { key: 'status', label: 'Status', className: '' },
+    { key: 'due_date', label: 'Due Date', className: '' },
+    { key: 'actions', label: 'Actions', className: styles.actionsHeader },
+  ];
 
   const handleDelete = async (invoiceId: string) => {
     if (!confirm('Are you sure you want to delete this invoice?')) {
@@ -72,14 +81,17 @@ export default function InvoiceList({ invoices }: InvoiceListProps) {
 
   return (
     <>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <table className={styles.table}>
         <thead>
           <tr>
-            <th>Client</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Due Date</th>
-            <th style={{ textAlign: 'right' }}>Actions</th>
+            {tableHeaders.map((header) => (
+              <th 
+                key={header.key} 
+                className={header.className}
+              >
+                {header.label}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>

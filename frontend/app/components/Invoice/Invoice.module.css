@@ -1,0 +1,26 @@
+.statusSent {
+  background-color: var(--status-sent-bg);
+}
+
+.statusPaid {
+  background-color: var(--status-paid-bg);
+}
+
+.statusOverdue {
+  background-color: var(--status-overdue-bg);
+}
+
+.actionsCell {
+  text-align: center;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-small);
+}
+
+.actionsCellDeleting {
+  opacity: 0.5;
+}
