@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import IconButton from './IconButton';
-import InvoiceFormModal from './InvoiceFormModal';
+import IconButton from '../IconButton';
+import InvoiceFormModal from '../InvoiceFormModal';
 import { Invoice } from '@/types/invoice';
 import { createInvoice } from '@/integrations/supabase/createInvoice';
+import styles from './InvoiceHeader.module.css';
 
 export default function InvoiceHeader() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,8 +33,8 @@ export default function InvoiceHeader() {
 
   return (
     <>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <h1 style={{ margin: 0 }}>Invoices</h1>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Invoices</h1>
         <IconButton
           icon={
             <svg
