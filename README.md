@@ -1,6 +1,9 @@
 # Invoice Service
 
+
 Fullstack invoice service application built with Next.js (frontend) and Express (backend).
+
+Check out the latest build [here](https://invoice-service-frontend-ten.vercel.app/)
 
 ## Project Structure
 
