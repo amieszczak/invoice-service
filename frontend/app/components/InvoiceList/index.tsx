@@ -20,6 +20,7 @@ export default function InvoiceList({ invoices }: InvoiceListProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [expandedColumn, setExpandedColumn] = useState<string | null>(null);
 
   const tableHeaders = [
     { key: 'client', label: 'Client', className: '' },
@@ -28,6 +29,11 @@ export default function InvoiceList({ invoices }: InvoiceListProps) {
     { key: 'due_date', label: 'Due Date', className: '' },
     { key: 'actions', label: 'Actions', className: styles.actionsHeader },
   ];
+
+  const handleColumnClick = (columnKey: string) => {
+    if (columnKey === 'actions') return;
+    setExpandedColumn(expandedColumn === columnKey ? null : columnKey);
+  };
 
   const handleDelete = async (invoiceId: string) => {
     if (!confirm('Are you sure you want to delete this invoice?')) {
@@ -81,13 +87,26 @@ export default function InvoiceList({ invoices }: InvoiceListProps) {
 
   return (
     <>
+      <div className={styles.infoBadge}>
+        {expandedColumn 
+          ? 'Tap the column header to collapse' 
+          : 'Tap the column header to expand'}
+      </div>
+      
       <table className={styles.table}>
         <thead>
           <tr>
             {tableHeaders.map((header) => (
               <th 
                 key={header.key} 
-                className={header.className}
+                className={`${header.className} ${
+                  header.key !== 'actions' ? styles.clickableHeader : ''
+                } ${expandedColumn === header.key ? styles.expandedColumn : ''}`}
+                onClick={() => handleColumnClick(header.key)}
+                style={{ 
+                  cursor: header.key !== 'actions' ? 'pointer' : 'default',
+                  width: expandedColumn && expandedColumn !== header.key && header.key !== 'actions' ? '1%' : undefined
+                }}
               >
                 {header.label}
               </th>
@@ -102,6 +121,7 @@ export default function InvoiceList({ invoices }: InvoiceListProps) {
               onEdit={handleEdit}
               onDelete={handleDelete}
               isDeleting={isDeleting === inv.id}
+              expandedColumn={expandedColumn}
             />
           ))}
         </tbody>

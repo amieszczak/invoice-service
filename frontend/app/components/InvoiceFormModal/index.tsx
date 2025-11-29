@@ -126,6 +126,15 @@ export default function InvoiceFormModal({
         className={styles.modal}
         onClick={(e) => e.stopPropagation()}
       >
+        <button
+          type="button"
+          className={styles.closeButton}
+          onClick={onClose}
+          aria-label="Close modal"
+        >
+          ×
+        </button>
+        
         <h2 className={styles.title}>
           {isEditMode ? 'Edit Invoice' : 'Add New Invoice'}
         </h2>

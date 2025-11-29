@@ -1,3 +1,20 @@
+.infoBadge {
+  display: inline-block;
+  background-color: var(--color-primary);
+  color: #333;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--color-secondary);
+}
+
+@media (min-width: 768px) {
+  .infoBadge {
+    display: none;
+  }
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -5,4 +22,39 @@
 
 .actionsHeader {
   text-align: center;
+}
+
+.clickableHeader {
+  position: relative;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.clickableHeader:hover {
+  background-color: var(--color-secondary);
+}
+
+.expandedColumn {
+  background-color: var(--color-secondary) !important;
+  font-weight: 700;
+  width: auto !important;
+  min-width: max-content;
+}
+
+@media (min-width: 768px) {
+  .clickableHeader {
+    pointer-events: none;
+    user-select: auto;
+  }
+
+  .clickableHeader:hover {
+    background-color: transparent;
+  }
+
+  .expandedColumn {
+    background-color: transparent !important;
+    font-weight: normal;
+    width: auto !important;
+    min-width: auto;
+  }
 }
