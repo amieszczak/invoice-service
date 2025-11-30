@@ -1,20 +1,9 @@
 import dotenv from 'dotenv';
-import pino from 'pino';
 import { envSchema } from '../schemas/env.schema';
+import { logger } from '../utils/logger';
 
 // Load environment variables first, before any other imports
 dotenv.config();
-
-const logger = pino({
-  level: 'error',
-  transport: {
-    target: 'pino-pretty',
-    options: {
-      colorize: true,
-      translateTime: 'SYS:standard'
-    }
-  }
-});
 
 const parsedEnv = envSchema.safeParse(process.env);
 

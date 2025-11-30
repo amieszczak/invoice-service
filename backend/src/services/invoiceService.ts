@@ -1,6 +1,6 @@
 import { supabase } from '../supabase/client';
 import { Invoice, CreateInvoiceDTO, UpdateInvoiceDTO } from '../schemas/invoice.schema';
-import { pinoLogger } from '../middleware/logger';
+import { logger } from '../utils/logger';
 
 export interface GetAllOptions {
   sortBy?: keyof Invoice;
@@ -12,18 +12,18 @@ export const invoiceService = {
     const { sortBy = 'created_at', ascending = false } = options;
     
     if (!supabase) {
-      pinoLogger.warn('Supabase not configured. Returning empty array.');
+      logger.warn('Supabase not configured. Returning empty array.');
       return [];
     }
     
-    pinoLogger.info({ msg: 'Fetching invoices from Supabase', sortBy, ascending });
+    logger.info({ msg: 'Fetching invoices from Supabase', sortBy, ascending });
     const { data, error } = await supabase
       .from('invoices')
       .select('*')
       .order(sortBy, { ascending });
     
     if (error) {
-      pinoLogger.error({
+      logger.error({
         msg: 'Supabase error',
         error: error.message,
         details: error.details,
@@ -33,7 +33,7 @@ export const invoiceService = {
       throw error;
     }
     
-    pinoLogger.info(`Successfully fetched ${data?.length || 0} invoices`);
+    logger.info(`Successfully fetched ${data?.length || 0} invoices`);
     return data || [];
   },
 
@@ -52,7 +52,7 @@ export const invoiceService = {
       .single();
     
     if (error) {
-      pinoLogger.error({
+      logger.error({
         msg: 'Supabase error',
         error: error.message,
         details: error.details,
@@ -62,7 +62,7 @@ export const invoiceService = {
       throw error;
     }
     
-    pinoLogger.info({ msg: 'Invoice created successfully', invoice: data });
+    logger.info({ msg: 'Invoice created successfully', invoice: data });
     return data;
   },
 
@@ -71,14 +71,14 @@ export const invoiceService = {
       throw new Error('Supabase client not configured. Please set SUPABASE_URL and SUPABASE_SERVICE_KEY in .env file');
     }
     
-    pinoLogger.info({ msg: 'Deleting invoice', invoiceId: id });
+    logger.info({ msg: 'Deleting invoice', invoiceId: id });
     const { error } = await supabase
       .from('invoices')
       .delete()
       .eq('id', id);
     
     if (error) {
-      pinoLogger.error({
+      logger.error({
         msg: 'Supabase error',
         error: error.message,
         details: error.details,
@@ -88,7 +88,7 @@ export const invoiceService = {
       throw error;
     }
     
-    pinoLogger.info({ msg: 'Invoice deleted successfully', invoiceId: id });
+    logger.info({ msg: 'Invoice deleted successfully', invoiceId: id });
   },
 
   async update(id: string, dto: UpdateInvoiceDTO): Promise<Invoice> {
@@ -96,7 +96,7 @@ export const invoiceService = {
       throw new Error('Supabase client not configured. Please set SUPABASE_URL and SUPABASE_SERVICE_KEY in .env file');
     }
     
-    pinoLogger.info({ msg: 'Updating invoice', invoiceId: id, data: dto });
+    logger.info({ msg: 'Updating invoice', invoiceId: id, data: dto });
     const { data, error } = await supabase
       .from('invoices')
       .update(dto)
@@ -105,7 +105,7 @@ export const invoiceService = {
       .single();
     
     if (error) {
-      pinoLogger.error({
+      logger.error({
         msg: 'Supabase error',
         error: error.message,
         details: error.details,
@@ -119,7 +119,7 @@ export const invoiceService = {
       throw new Error('Invoice not found');
     }
     
-    pinoLogger.info({ msg: 'Invoice updated successfully', invoice: data });
+    logger.info({ msg: 'Invoice updated successfully', invoice: data });
     return data;
   }
 };

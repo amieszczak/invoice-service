@@ -2,23 +2,22 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { invoiceService } from '../services/invoiceService';
 import { createInvoiceSchema, updateInvoiceSchema, deleteInvoiceParamsSchema, getAllQuerySchema } from './validation/invoiceRequestValidation';
-import { pinoLogger } from '../middleware/logger';
+import { logger } from '../utils/logger';
 
 const router = Router();
 
 router.get('/', async (req, res) => {
   try {
     const validatedQuery = getAllQuerySchema.parse(req.query);
-    const ascending = validatedQuery.ascending === 'true';
     
     const invoices = await invoiceService.getAll({ 
-      sortBy: validatedQuery.sortBy as any, 
-      ascending 
+      sortBy: validatedQuery.sortBy, 
+      ascending: validatedQuery.ascending === 'true' ? true : false
     });
     res.json(invoices);
   } catch (error: any) {
     if (error instanceof z.ZodError) {
-      pinoLogger.warn({
+      logger.warn({
         msg: 'Validation failed for query parameters',
         issues: error.issues
       });
@@ -35,7 +34,7 @@ router.get('/', async (req, res) => {
     const errorMessage = error instanceof Error ? error.message : 'Failed to fetch invoices';
     const errorDetails = error?.details || error?.hint || error?.code || '';
     
-    pinoLogger.error({
+    logger.error({
       msg: 'Error fetching invoices',
       error: errorMessage,
       details: errorDetails,
@@ -57,7 +56,7 @@ router.post('/', async (req, res) => {
     res.status(201).json(invoice);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      pinoLogger.warn({
+      logger.warn({
         msg: 'Validation failed for invoice creation',
         issues: error.issues
       });
@@ -72,7 +71,7 @@ router.post('/', async (req, res) => {
     }
     
     const errorMessage = error instanceof Error ? error.message : 'Failed to create invoice';
-    pinoLogger.error({
+    logger.error({
       msg: 'Error creating invoice',
       error: errorMessage,
       stack: error instanceof Error ? error.stack : undefined
@@ -90,7 +89,7 @@ router.delete('/:id', async (req, res) => {
     res.status(204).send();
   } catch (error: any) {
     if (error instanceof z.ZodError) {
-      pinoLogger.warn({
+      logger.warn({
         msg: 'Validation failed for invoice deletion',
         issues: error.issues
       });
@@ -107,7 +106,7 @@ router.delete('/:id', async (req, res) => {
     const errorMessage = error instanceof Error ? error.message : 'Failed to delete invoice';
     const errorDetails = error?.details || error?.hint || error?.code || '';
     
-    pinoLogger.error({
+    logger.error({
       msg: 'Error deleting invoice',
       invoiceId: req.params.id,
       error: errorMessage,
@@ -139,7 +138,7 @@ router.patch('/:id', async (req, res) => {
     res.json(invoice);
   } catch(error: any) {
     if (error instanceof z.ZodError) {
-      pinoLogger.warn({
+      logger.warn({
         msg: 'Validation failed for invoice update',
         issues: error.issues
       });
@@ -156,7 +155,7 @@ router.patch('/:id', async (req, res) => {
     const errorMessage = error instanceof Error ? error.message : 'Failed to edit invoice';
     const errorDetails = error?.details || error?.hint || error?.code || '';
     
-    pinoLogger.error({
+    logger.error({
       msg: 'Error editing invoice',
       invoiceId: req.params.id,
       error: errorMessage,
