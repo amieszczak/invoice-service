@@ -106,7 +106,7 @@ describe('Invoice Routes', () => {
 
   describe('DELETE /invoices/:id', () => {
     it('should delete an invoice', async () => {
-      const invoiceId = '123';
+      const invoiceId = '550e8400-e29b-41d4-a716-446655440000';
       vi.mocked(invoiceService.delete).mockResolvedValue(undefined);
 
       await request(app)
@@ -116,26 +116,23 @@ describe('Invoice Routes', () => {
       expect(invoiceService.delete).toHaveBeenCalledWith(invoiceId);
     });
 
-    it('should handle empty id parameter', async () => {
-      // Note: Express routes require a parameter, so truly empty IDs aren't possible
-      // This test verifies the service is called with the provided id
-      const invoiceId = 'valid-id';
-      vi.mocked(invoiceService.delete).mockResolvedValue(undefined);
+    it('should validate UUID format', async () => {
+      const response = await request(app)
+        .delete('/invoices/invalid-uuid')
+        .expect(400);
 
-      await request(app)
-        .delete(`/invoices/${invoiceId}`)
-        .expect(204);
-
-      expect(invoiceService.delete).toHaveBeenCalledWith(invoiceId);
+      expect(response.body).toHaveProperty('error');
+      expect(response.body.error).toContain('Invalid');
     });
 
     it('should return 404 if invoice not found', async () => {
       const error: any = new Error('Invoice not found');
       error.code = 'PGRST116';
+      const validUuid = '550e8400-e29b-41d4-a716-446655440001';
       vi.mocked(invoiceService.delete).mockRejectedValue(error);
 
       const response = await request(app)
-        .delete('/invoices/non-existent')
+        .delete(`/invoices/${validUuid}`)
         .expect(404);
 
       expect(response.body).toHaveProperty('error', 'Invoice not found');
@@ -143,10 +140,11 @@ describe('Invoice Routes', () => {
 
     it('should handle errors when deleting invoice', async () => {
       const errorMessage = 'Database error';
+      const validUuid = '550e8400-e29b-41d4-a716-446655440002';
       vi.mocked(invoiceService.delete).mockRejectedValue(new Error(errorMessage));
 
       const response = await request(app)
-        .delete('/invoices/123')
+        .delete(`/invoices/${validUuid}`)
         .expect(500);
 
       expect(response.body).toHaveProperty('error', errorMessage);
@@ -155,7 +153,7 @@ describe('Invoice Routes', () => {
 
   describe('PATCH /invoices/:id', () => {
     it('should update an invoice', async () => {
-      const invoiceId = '123';
+      const invoiceId = '550e8400-e29b-41d4-a716-446655440003';
       const updateDTO = {
         client_name: 'Updated Client',
         amount: 3000,
@@ -178,16 +176,21 @@ describe('Invoice Routes', () => {
         .expect(200);
 
       expect(response.body).toEqual(mockUpdatedInvoice);
-      expect(invoiceService.update).toHaveBeenCalledWith(invoiceId, updateDTO);
+      // Validation adds default status 'draft' if not provided
+      expect(invoiceService.update).toHaveBeenCalledWith(invoiceId, {
+        ...updateDTO,
+        status: 'draft'
+      });
     });
 
     it('should return 404 if invoice not found', async () => {
       const error: any = new Error('Invoice not found');
       error.code = 'PGRST116';
+      const validUuid = '550e8400-e29b-41d4-a716-446655440004';
       vi.mocked(invoiceService.update).mockRejectedValue(error);
 
       const response = await request(app)
-        .patch('/invoices/non-existent')
+        .patch(`/invoices/${validUuid}`)
         .send({ client_name: 'Test' })
         .expect(404);
 
@@ -196,10 +199,11 @@ describe('Invoice Routes', () => {
 
     it('should handle errors when updating invoice', async () => {
       const errorMessage = 'Update failed';
+      const validUuid = '550e8400-e29b-41d4-a716-446655440005';
       vi.mocked(invoiceService.update).mockRejectedValue(new Error(errorMessage));
 
       const response = await request(app)
-        .patch('/invoices/123')
+        .patch(`/invoices/${validUuid}`)
         .send({ client_name: 'Test' })
         .expect(500);
 
