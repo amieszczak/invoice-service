@@ -46,7 +46,6 @@ export default function InvoiceList({ invoices }: InvoiceListProps) {
       router.refresh();
     } catch (error) {
       alert('Failed to delete invoice. Please try again.');
-      console.error('Delete error:', error);
     } finally {
       setIsDeleting(null);
     }
@@ -75,7 +74,6 @@ export default function InvoiceList({ invoices }: InvoiceListProps) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update invoice';
       setError(errorMessage);
-      console.error('Error updating invoice:', err);
     } finally {
       setIsSubmitting(false);
     }

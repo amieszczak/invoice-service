@@ -25,7 +25,6 @@ export default function InvoiceHeader() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create invoice';
       setError(errorMessage);
-      console.error('Error creating invoice:', err);
     } finally {
       setIsSubmitting(false);
     }

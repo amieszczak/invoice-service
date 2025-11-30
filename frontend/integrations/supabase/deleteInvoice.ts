@@ -13,7 +13,6 @@ export async function deleteInvoice(invoiceId: string): Promise<void> {
       );
     }
   } catch (error) {
-    console.error('Error deleting invoice:', error);
     throw error;
   }
 }

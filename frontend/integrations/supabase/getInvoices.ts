@@ -15,7 +15,6 @@ export async function getInvoices(): Promise<Invoice[]> {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching invoices:', error);
     throw error;
   }
 }

@@ -2,6 +2,10 @@
   "name": "invoice-service",
   "private": true,
   "workspaces": ["backend", "frontend"],
+  "engines": {
+    "node": ">=20.18.0",
+    "npm": ">=10.0.0"
+  },
   "scripts": {
     "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w frontend\"",
     "build": "npm run build -w backend && npm run build -w frontend",

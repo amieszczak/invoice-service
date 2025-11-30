@@ -25,7 +25,6 @@ export async function editInvoice(
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error editing invoice:', error);
     throw error;
   }
 }

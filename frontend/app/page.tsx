@@ -12,7 +12,6 @@ export default async function Home() {
     invoices = await getInvoices();
   } catch (err) {
     error = err instanceof Error ? err.message : 'Failed to load invoices';
-    console.error('Error loading invoices:', err);
   }
 
   return (
