@@ -2,8 +2,8 @@
 
 import { Invoice as InvoiceType } from '@/types/invoice';
 import Invoice from '../Invoice';
-import { deleteInvoice } from '@/integrations/supabase/deleteInvoice';
-import { editInvoice } from '@/integrations/supabase/editInvoice';
+import { deleteInvoice } from '@/integrations/api/deleteInvoice';
+import { editInvoice } from '@/integrations/api/editInvoice';
 import InvoiceFormModal from '../InvoiceFormModal';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';

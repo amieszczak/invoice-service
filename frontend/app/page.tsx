@@ -1,4 +1,4 @@
-import { getInvoices } from '@/integrations/supabase/getInvoices';
+import { getInvoices } from '@/integrations/api/getInvoices';
 import InvoiceList from './components/InvoiceList';
 import InvoiceHeader from './components/InvoiceHeader';
 import { Invoice } from '@/types/invoice';

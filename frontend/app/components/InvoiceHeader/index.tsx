@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import IconButton from '../IconButton';
 import InvoiceFormModal from '../InvoiceFormModal';
 import { Invoice } from '@/types/invoice';
-import { createInvoice } from '@/integrations/supabase/createInvoice';
+import { createInvoice } from '@/integrations/api/createInvoice';
 import styles from './InvoiceHeader.module.css';
 
 export default function InvoiceHeader() {
