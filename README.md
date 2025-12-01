@@ -66,15 +66,67 @@ npm run build
 
 ## Deployment
 
-### Frontend
-The frontend application is deployed on **Vercel** and is accessible at:
-- Production: [https://invoice-service-frontend-ten.vercel.app/](https://invoice-service-frontend-ten.vercel.app/)
+This application is deployed using a multi-platform architecture:
+- **Backend**: Railway
+- **Frontend**: Vercel
+- **Database**: Supabase (PostgreSQL)
 
-### Backend
-The backend API is deployed on **Railway** and configured to work with the frontend application.
+### Backend Deployment (Railway)
 
-### Database
-Application data is stored on **Supabase** (PostgreSQL database).
+1. **Repository Setup**
+   - The repository was pushed to GitHub
+
+2. **Railway Project Creation**
+   - A new project was created in Railway
+   - The project was configured to deploy from the GitHub repository
+
+3. **Service Configuration**
+   - Railway automatically detected the `backend/` directory as a service
+   - The service was configured to point to the `/backend` folder
+
+4. **Environment Variables**
+   - The following environment variables were configured in Railway's Variables tab:
+     ```
+     SUPABASE_URL
+     SUPABASE_SERVICE_ROLE_KEY
+     PORT
+     ```
+
+5. **Deployment**
+   - After the service was deployed successfully, Railway generated a public URL for the backend API
+
+6. **Verification**
+   - The deployment was verified by testing the health endpoint
+   - By requesting a health-check URL in the form: `https://<sample-railway-address>.up.railway.app/health` 
+   - The API responded correctly, confirming successful deployment
+
+### Frontend Deployment (Vercel)
+
+1. **Repository Import**
+   - The GitHub repository was imported into Vercel
+
+2. **Project Configuration**
+   - The root directory was set to `frontend/`
+   - Vercel automatically detected the project as a Next.js application
+
+3. **Environment Variables**
+   - The backend API URL was configured as an environment variable:
+     ```
+     NEXT_PUBLIC_API_URL
+     ```
+
+4. **Deployment**
+   - The Next.js application was built and deployed by Vercel
+
+5. **Verification**
+   - The deployment was verified by testing the UI functionality
+   - Invoice operations were tested to confirm frontend-backend communication
+
+### Live Application
+
+- **Frontend**: [https://invoice-service-frontend-ten.vercel.app/](https://invoice-service-frontend-ten.vercel.app/)
+- **Backend**: Deployed on Railway
+- **Database**: Hosted on Supabase
 
 ## Technologies
 

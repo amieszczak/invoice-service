@@ -1,35 +1,331 @@
 openapi: 3.0.0
 info:
   title: Invoice API
+  description: RESTful API for managing invoices
   version: 1.0.0
+  contact:
+    name: Invoice Service
+servers:
+  - url: http://localhost:3001
+    description: Local development server
+
 paths:
   /health:
     get:
       summary: Health check
+      description: Returns the current health status of the API
+      tags:
+        - Health
       responses:
         '200':
-          description: OK
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
   /invoices:
     get:
       summary: List all invoices
+      description: Retrieve a list of all invoices with optional sorting
+      tags:
+        - Invoices
+      parameters:
+        - name: sortBy
+          in: query
+          description: Field to sort by
+          required: false
+          schema:
+            type: string
+            enum: [id, client_name, amount, status, due_date, created_at]
+        - name: ascending
+          in: query
+          description: Sort order (true for ascending, false for descending)
+          required: false
+          schema:
+            type: string
+            enum: ['true', 'false']
       responses:
         '200':
           description: Array of invoices
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Invoice'
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
     post:
-      summary: Create invoice
+      summary: Create a new invoice
+      description: Create a new invoice with the provided details
+      tags:
+        - Invoices
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                client_name:
-                  type: string
-                amount:
-                  type: number
-                due_date:
-                  type: string
+              $ref: '#/components/schemas/CreateInvoiceRequest'
       responses:
         '201':
-          description: Created
+          description: Invoice created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoice'
+        '400':
+          description: Invalid invoice data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /invoices/{id}:
+    patch:
+      summary: Update an invoice
+      description: Update an existing invoice by ID
+      tags:
+        - Invoices
+      parameters:
+        - name: id
+          in: path
+          description: Invoice UUID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInvoiceRequest'
+      responses:
+        '200':
+          description: Invoice updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoice'
+        '400':
+          description: Invalid invoice data or ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '404':
+          description: Invoice not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Delete an invoice
+      description: Delete an existing invoice by ID
+      tags:
+        - Invoices
+      parameters:
+        - name: id
+          in: path
+          description: Invoice UUID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Invoice deleted successfully
+        '400':
+          description: Invalid invoice ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '404':
+          description: Invoice not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - timestamp
+      properties:
+        status:
+          type: string
+          example: ok
+        timestamp:
+          type: string
+          format: date-time
+          example: '2025-12-01T10:30:00.000Z'
+
+    Invoice:
+      type: object
+      required:
+        - id
+        - client_name
+        - amount
+        - status
+        - due_date
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the invoice
+          example: '123e4567-e89b-12d3-a456-426614174000'
+        client_name:
+          type: string
+          minLength: 1
+          description: Name of the client
+          example: 'Acme Corporation'
+        amount:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+          description: Invoice amount (must be positive)
+          example: 1500.50
+        status:
+          type: string
+          enum: [draft, sent, paid, overdue]
+          description: Current status of the invoice
+          example: draft
+        due_date:
+          type: string
+          minLength: 1
+          description: Due date for the invoice
+          example: '2025-12-31'
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the invoice was created
+          example: '2025-12-01T10:30:00.000Z'
+
+    CreateInvoiceRequest:
+      type: object
+      required:
+        - client_name
+        - amount
+        - due_date
+      properties:
+        client_name:
+          type: string
+          minLength: 1
+          description: Name of the client
+          example: 'Acme Corporation'
+        amount:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+          description: Invoice amount (must be positive)
+          example: 1500.50
+        status:
+          type: string
+          enum: [draft, sent, paid, overdue]
+          default: draft
+          description: Initial status of the invoice (defaults to 'draft')
+          example: draft
+        due_date:
+          type: string
+          minLength: 1
+          description: Due date for the invoice
+          example: '2025-12-31'
+
+    UpdateInvoiceRequest:
+      type: object
+      properties:
+        client_name:
+          type: string
+          minLength: 1
+          description: Name of the client
+          example: 'Acme Corporation'
+        amount:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+          description: Invoice amount (must be positive)
+          example: 1500.50
+        status:
+          type: string
+          enum: [draft, sent, paid, overdue]
+          description: Current status of the invoice
+          example: sent
+        due_date:
+          type: string
+          minLength: 1
+          description: Due date for the invoice
+          example: '2025-12-31'
+
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: 'Invoice not found'
+        details:
+          type: string
+          description: Additional error details
+          example: 'Additional context about the error'
+
+    ValidationError:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: 'Invalid invoice data'
+        details:
+          type: array
+          description: Array of validation errors
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                description: Field that failed validation
+                example: 'amount'
+              message:
+                type: string
+                description: Validation error message
+                example: 'Amount must be a positive number'
