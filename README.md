@@ -64,10 +64,35 @@ Build both frontend and backend:
 npm run build
 ```
 
+## Deployment
+
+### Frontend
+The frontend application is deployed on **Vercel** and is accessible at:
+- Production: [https://invoice-service-frontend-ten.vercel.app/](https://invoice-service-frontend-ten.vercel.app/)
+
+### Backend
+The backend API is deployed on **Railway** and configured to work with the frontend application.
+
 ## Technologies
 
 - **Frontend**: Next.js
 - **Backend**: Express.js
+
+## Use of AI Tools
+
+AI-assisted tools (ChatGPT and Cursor) were used selectively to improve development efficiency and code quality. Their role was limited to producing preliminary ideas, exploring alternative approaches, and clarifying technical considerations when needed.
+
+All architecture decisions, business logic, data modeling, validation rules, and the final implementation were designed and written manually to ensure correctness, maintainability, and full alignment with project requirements.
+
+AI was not used to build complete features end-to-end. Instead, it served as a supportive tool for tasks such as:
+
+- Confirming best practices for Express and Next.js project structure
+- Validating TypeScript types and Zod schemas
+- Refining the API contract and HTTP method choices
+- Identifying potential edge cases
+- Accelerating documentation and improving error-handling patterns
+
+The final codebase, including architecture, implementation details, and deployment configuration, was reviewed and verified manually.
 
 ## License
 
