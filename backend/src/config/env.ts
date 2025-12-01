@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 import { envSchema } from '../schemas/env.schema';
 import { logger } from '../utils/logger';
 
-// Load environment variables first, before any other imports
 dotenv.config();
 
 const parsedEnv = envSchema.safeParse(process.env);

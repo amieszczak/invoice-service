@@ -73,6 +73,9 @@ The frontend application is deployed on **Vercel** and is accessible at:
 ### Backend
 The backend API is deployed on **Railway** and configured to work with the frontend application.
 
+### Database
+Application data is stored on **Supabase** (PostgreSQL database).
+
 ## Technologies
 
 - **Frontend**: Next.js
