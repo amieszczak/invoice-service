@@ -7,11 +7,6 @@ import { Pool } from 'pg';
 export const runMigrations = async (): Promise<void> => {
   logger.info('Starting database migrations...');
   
-  if (!env.SUPABASE_DB_URL) {
-    logger.warn('SUPABASE_DB_URL not provided. Skipping automatic migrations.');
-    return;
-  }
-  
   let pool: Pool | null = null;
   
   try {
