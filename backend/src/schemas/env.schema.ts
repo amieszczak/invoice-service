@@ -6,6 +6,7 @@ export const envSchema = z.object({
   PORT: z.string().optional().default('4000'),
   SUPABASE_URL: z.string().url(),
   SUPABASE_SERVICE_KEY: z.string().min(1),
+  SUPABASE_DB_URL: z.string().url().optional(),
   NODE_ENV: nodeEnvEnum,
 });
 

@@ -89,6 +89,7 @@ This application is deployed using a multi-platform architecture:
      ```
      SUPABASE_URL
      SUPABASE_SERVICE_ROLE_KEY
+     SUPABASE_DB_URL
      PORT
      ```
 
